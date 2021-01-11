@@ -69,6 +69,26 @@ app.get("/api/persons/:id", (request, response) => {
   return response.status(404).end();
 });
 
+app.put("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const oldPerson = persons.find((p) => p.id === id);
+  if (!oldPerson) {
+    return response.status(404).end();
+  }
+  const { name, number } = request.body;
+  if (!name || !number) {
+    const errorMessage = { error: "name and number are required" };
+    return response.status(400).json(errorMessage).end();
+  }
+  const person = {
+    name,
+    number,
+    id,
+  };
+  persons = persons.map((p) => (p.id !== id ? p : person));
+  return response.json(person);
+});
+
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   const person = persons.find((p) => p.id === id);
